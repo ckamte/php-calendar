@@ -3,6 +3,7 @@
 $month = date('Y-m');
 $holidays = [
     '2024-02-20' => 'Chin National Day',
+    '2024-12-25' => 'Christmas',
 ];
 
 $calendar = calendar($month, $holidays);
