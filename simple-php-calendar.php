@@ -2,8 +2,10 @@
 
 $month = date('Y-m');
 $holidays = [
-    '2024-02-20' => 'Chin National Day',
-    '2024-12-25' => 'Christmas',
+    '02' => 'Every Month',              // daily event
+    '02-20' => 'Chin National Day',     // monthly event
+    '12-25' => 'Christmas',
+    '2025-02-24' => 'Special Holiday'   // casual event
 ];
 
 $calendar = calendar($month, $holidays);
@@ -20,7 +22,7 @@ $weeks = $calendar['weeks'];
  * 
  * @return array
  */
-function calendar(string $month, array $holidays = null): array
+function calendar(string $month, ?array $holidays = null): array
 {
     // build template for week days
     $weekDayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
@@ -55,6 +57,27 @@ function calendar(string $month, array $holidays = null): array
         ];
     }
 
+    // rebuild holidays date string
+    if (array($holidays)) {
+        $rebuild = [];
+        $curYear = date('Y');
+        $curMonth = date('Y-m');
+        foreach ($holidays as $key => $day) {
+            if (strlen($key) === 2) {
+                $rebuild[$curMonth . '-' . $key] = $day;
+            }
+            if (strlen($key) === 5) {
+                $rebuild[$curYear . '-' . $key] = $day;
+            }
+            if (strlen($key) === 10) {
+                $rebuild[$key] = $day;
+            }
+        }
+
+        // replace holydays
+        $holidays = $rebuild;
+    }
+
     // build weekly date data
     $weekTitle = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth'];
     $chunked = array_chunk($days, 7, true);
@@ -74,17 +97,23 @@ function calendar(string $month, array $holidays = null): array
 
             // for holidays
             $dayText = null;
-            if (is_array($holidays)) {
-                if ($day[$arrKey] != null) {
-                    $dateNumber = str_pad(strval($day[$arrKey]), 2, '0', STR_PAD_LEFT);
-                    $dateString = $month . '-' . $dateNumber;
-                    if (array_key_exists($dateString, $holidays)) {
-                        $classAdd .= ' holiday';
-                        $dayText = $holidays[$dateString];
-                    }
+            do {
+                if (!is_array($holidays)) {
+                    break;
                 }
-            }
+                
+                if ($day[$arrKey] === null) {
+                    break;
+                }
 
+                $dateNumber = str_pad(strval($day[$arrKey]), 2, '0', STR_PAD_LEFT);
+                $dateString = $month . '-' . $dateNumber;
+                if (array_key_exists($dateString, $holidays)) {
+                    $classAdd .= ' holiday';
+                    $dayText = $holidays[$dateString];
+                }
+            } while (0);
+            
             $days[$arrKey] = [
                 'day' => $day[$arrKey],
                 'class' => $arrKey . $classAdd,
