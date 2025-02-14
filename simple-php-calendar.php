@@ -170,11 +170,13 @@ function calendar(string $month, ?array $holidays = null): array
         .calendar-day-name.sunday {
             border-top-left-radius: 0.5rem;
             background-color: red;
+            color: #fff;
         }
 
         .calendar-day-name.saturday {
             border-top-right-radius: 0.5rem;
             background-color: red;
+            color: #fff;
         }
 
         .calendar-day {
@@ -186,10 +188,15 @@ function calendar(string $month, ?array $holidays = null): array
             padding: 1rem;
         }
 
+        .calendar-day:hover {
+            background-color: #9abbe0;
+        }
+
         .calendar-day.sunday,
         .calendar-day.saturday,
         .calendar-day.holiday {
             color: red;
+            font-weight: bold;
         }
 
         .calendar-day.today {
